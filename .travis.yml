@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t shadowglass/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true USERNAME/react-test npm test
+
+after_success:
+  - docker build -t shadowglass/multi-client ./client
+  - docker build -t shadowglass/multi-nginx ./nginx
+  - docker build -t shadowglass/multi-server ./server
+  - docker build -t shadowglass/multi-worker ./worker
+  # Log in
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Push to docker hub
+  - docker push shadowglass/multi-client
+  - docker push shadowglass/multi-nginx
+  - docker push shadowglass/multi-server
+  - docker push shadowglass/multi-worker
