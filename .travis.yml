@@ -20,3 +20,15 @@ after_success:
   - docker push shadowglass/multi-nginx
   - docker push shadowglass/multi-server
   - docker push shadowglass/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: "ap-southeast-2"
+  app: "multi-docker"
+  env: "Multidocker-env"
+  bucket_name: "elasticbeanstalk-ap-southeast-2-659168591895"
+  bucket_path: "docker-multi"
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
